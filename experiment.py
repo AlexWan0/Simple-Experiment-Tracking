@@ -12,13 +12,31 @@ class Plotter():
 
 			self.stats[k].append(v)
 
-	def output(self, fp="result.png"):
-		for k, v in self.stats.items():
-			plt.plot(v, label=k)
+	def build_plot(self, suptitle=None, subplots=None, figsize=(10, 10), **kwargs):
+		if subplots == None:
+			fig, ax = plt.subplots(1, len(self.stats), figsize=figsize)
+		else:
+			fig, ax_array = plt.subplots(*subplots, figsize=figsize)
+			ax = ax_array.flatten()
 
-		plt.legend(loc="upper left")
+		if suptitle != None:
+			fig.suptitle(suptitle)
+
+		for i, (k, v) in enumerate(self.stats.items()):
+			ax[i].plot(v, label=k, **kwargs)
+
+			ax[i].legend(loc="upper left")
+
+	def output(self, suptitle=None, subplots=None, figsize=(10, 10), **kwargs):
+		self.build_plot(suptitle=suptitle, subplots=subplots, figsize=figsize, **kwargs)
+
 		plt.savefig(fp)
 		plt.close()
+
+	def output_show(self, suptitle=None, subplots=None, figsize=(10, 10), **kwargs):
+		self.build_plot(suptitle=suptitle, subplots=subplots, figsize=figsize, **kwargs)
+
+		plt.show()
 
 class Experiment():
 	def __init__(self, experiment_name, config_file='config.txt', plot_file='plot.png', folder='experiments', **kwargs):
@@ -62,5 +80,17 @@ class Experiment():
 		if plot:
 			self.plotter.add(**kwargs)
 			self.plotter.output(fp=os.path.join(self.experiment_path, self.plot_file))	
-
 			
+class RunningAvg:
+	def __init__(self, buffer_size, default=None):
+		self.buffer = [default] * buffer_size
+		self.idx = 0
+		self.buffer_size = buffer_size
+	
+	def __call__(self, x):
+		self.buffer[self.idx] = x
+		self.idx = (self.idx + 1) % self.buffer_size
+		return self.none_avg()
+	
+	def none_avg(self):
+		return sum([b for b in self.buffer if b != None]) / self.buffer_size
