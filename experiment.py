@@ -39,7 +39,7 @@ class Plotter():
 		plt.show()
 
 class Experiment():
-	def __init__(self, experiment_name, config_file='config.txt', plot_file='plot.png', folder='experiments', **kwargs):
+	def __init__(self, experiment_name, allow_replace=False, config_file='config.txt', plot_file='plot.png', folder='experiments', **kwargs):
 		self.experiment_name = experiment_name
 
 		self.folder = folder
@@ -49,10 +49,11 @@ class Experiment():
 
 		self.experiment_path = os.path.join(self.folder, self.experiment_name)
 
-		if os.path.isdir(self.experiment_path):
+		if os.path.isdir(self.experiment_path) and not allow_replace:
 			raise Exception("Experiment at %s already exists" % self.experiment_path)
 
-		os.mkdir(self.experiment_path)
+		if not os.path.isdir(self.experiment_path):
+			os.mkdir(self.experiment_path)
 
 		with open(os.path.join(self.experiment_path, config_file), 'w') as file_out:
 			file_out.write(str(kwargs))
