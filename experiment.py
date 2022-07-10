@@ -27,7 +27,7 @@ class Plotter():
 
 			ax[i].legend(loc="upper left")
 
-	def output(self, fp, suptitle=None, subplots=None, figsize=(10, 10), **kwargs):
+	def output(self, fp="results.png", suptitle=None, subplots=None, figsize=(10, 10), **kwargs):
 		self.build_plot(suptitle=suptitle, subplots=subplots, figsize=figsize, **kwargs)
 
 		plt.savefig(fp)
