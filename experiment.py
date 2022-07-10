@@ -72,7 +72,7 @@ class Experiment():
 		if cmd:
 			cwd_func(line)
 	
-	def log_stats(self, num, log_file='log.txt', cmd=True, plot=True, cwd_func=print, **kwargs):
+	def log_stats(self, num, log_file='log.txt', cmd=True, plot=True, cwd_func=print, plot_kwargs={}, **kwargs):
 		log_string = f'{num}: {str(kwargs)}'
 		
 		if log_file != None:
@@ -80,7 +80,7 @@ class Experiment():
 		
 		if plot:
 			self.plotter.add(**kwargs)
-			self.plotter.output(fp=os.path.join(self.experiment_path, self.plot_file))	
+			self.plotter.output(fp=os.path.join(self.experiment_path, self.plot_file), **plot_kwargs)	
 			
 class RunningAvg:
 	def __init__(self, buffer_size, default=None):
